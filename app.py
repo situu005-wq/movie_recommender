@@ -1,7 +1,11 @@
 import requests
 import streamlit as st
+import os
+from dotenv import load_dotenv
 import pickle
 import time
+load_dotenv()
+api_key = os.getenv("TMDB_API_KEY")
 movies = pickle.load(open('movies.pkl', 'rb'))
 movies_list = movies['title'].values
 print(movies_list)
@@ -12,7 +16,7 @@ options = st.selectbox(
 )
 
 def fetch_poster(movie_id):
-    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=cd2afdefcd4227751adc16a7f240fc72&language=en-US"
+    url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key={api_key}&language=en-US"
     try:
         print("Fetching:", movie_id)
         response = requests.get(url, timeout=10)
@@ -37,7 +41,7 @@ def recommended(selected_movies):
     recommended_movies = []
     recommended_posters = []
     for i in m_list:
-        #fetch poster from API
+        #fetching the poster from api
         movie_id = movies.iloc[i[0]].movie_id   
         recommended_movies.append(movies.iloc[i[0]].title)
         recommended_posters.append(fetch_poster(movie_id))
